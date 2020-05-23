@@ -19,6 +19,7 @@ class CreateTaxes extends Migration
             $table->float('tax');
             $table->unsignedInteger('class');
             $table->time('from');
+            $table->unsignedInteger('duration');
         });
     }
 
