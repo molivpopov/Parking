@@ -17,7 +17,7 @@ class CreateTaxes extends Migration
             $table->id();
             $table->string('name', 100)->unique();
             $table->float('tax');
-            $table->unsignedInteger('class');
+            $table->unsignedInteger('vclass_id');
             $table->time('from');
             $table->unsignedInteger('duration');
         });

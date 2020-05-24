@@ -16,3 +16,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/space', 'MiscellaneousController@space');
+Route::get('/bill/{number}/{time?}', 'MiscellaneousController@bill')->middleware('check.number');

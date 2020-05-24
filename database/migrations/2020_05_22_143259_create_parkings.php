@@ -15,7 +15,7 @@ class CreateParkings extends Migration
     {
         Schema::create('parkings', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('vehicle');
+            $table->unsignedInteger('vehicle_id');
             $table->timestamp('entry')->useCurrent();
             $table->timestamp('exit')->nullable();
         });

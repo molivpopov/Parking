@@ -18,8 +18,8 @@ class CreateVehicles extends Migration
             $table->id();
             $table->uuid('uuid');
             $table->string('number');
-            $table->unsignedInteger('class');
-            $table->unsignedInteger('discount');
+            $table->unsignedInteger('vclass_id');
+            $table->unsignedInteger('discount_id')->nullable();
             $table->timestamp('created_at')->useCurrent();
         });
 
