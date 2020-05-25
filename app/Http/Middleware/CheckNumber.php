@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Parkings;
 use App\Models\Vehicles;
 use Closure;
 
@@ -17,11 +18,11 @@ class CheckNumber
     public function handle($request, Closure $next)
     {
 
-        $parameter = $request->route()->parameter('number');
+        $parameter = $request->route()->parameter('parking_id');
 
         if (
             $parameter &&
-            !(Vehicles::where('number', $parameter)->first())
+            !(Parkings::where('uuid', $parameter)->first())
         ) {
             abort(404);
         }

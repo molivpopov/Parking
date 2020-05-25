@@ -18,4 +18,8 @@ Route::get('/', function () {
 });
 
 Route::get('/space', 'MiscellaneousController@space');
-Route::get('/bill/{number}/{time?}', 'MiscellaneousController@bill')->middleware('check.number');
+Route::get('/bill/{parking_id}/{time?}', 'MiscellaneousController@bill')
+    ->middleware('check.parking_id');
+Route::get('/entry/{vehicle_id}', 'EntryController@entry');
+Route::get('/exit/{parking_id}', 'EntryController@exit')
+    ->middleware('check.parking_id');

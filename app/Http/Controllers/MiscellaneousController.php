@@ -3,54 +3,44 @@
 namespace App\Http\Controllers;
 
 use App\Calculations\Bill;
+use App\Calculations\Space;
 use App\Models\Parkings;
-use Illuminate\Support\Facades\DB;
 
 class MiscellaneousController extends Controller
 {
-    use Bill;
+    use Bill, Space;
 
     /**
      * @return \Illuminate\Http\JsonResponse
      */
     public function space()
     {
-
-        $usedPlaces = DB::select(/** @lang text */ "
-            SELECT sum(vc.places) AS used_places
-            FROM parkings AS p
-            JOIN vehicles AS vh ON vh.id = p.vehicle_id
-            JOIN vclasses AS vc ON vc.id = vh.vclass_id
-            WHERE p.exit IS NULL;
-        ")[0];
-
-        return response()->json(['free' => env('MAX_PLACES', 200) - $usedPlaces->used_places]);
-
+        return response()->json(['free' => $this->freeSpace()]);
     }
 
     /**
-     * @param $number
+     * @param $uuid
      * @param null $calculationTime
      * @return \Illuminate\Http\JsonResponse
      */
-    public function bill($number, $calculationTime = null)
+    public function bill($parkingId, $calculationTime = null)
     {
 
         $entry = Parkings::with(['vehicle.taxes', 'vehicle.discounts'])
-            ->whereNull('exit')
-            ->whereHas('vehicle', function ($q) use ($number) {
-                $q->where('number', $number);
-            })->first();
+            ->where('uuid', $parkingId)
+            ->first();
 
-        if (!$entry) {
-            return response()->json('this vehicle is out of parking');
+        if ($entry->exit) {
+            $calculationTime = $entry->exit;
         }
 
-        $calculationTime = $calculationTime ?: date('Y-m-d H:i:s');
+        $calculationTime = $calculationTime
+            ? strtotime($calculationTime)
+            : time();
 
         $bill = $this->makeBill(
             strtotime($entry->entry),
-            strtotime($calculationTime),
+            $calculationTime,
             $entry->vehicle->taxes
         );
 
@@ -60,7 +50,7 @@ class MiscellaneousController extends Controller
 
         $bill['car_number'] = $entry->vehicle->number;
         $bill['time_entry'] = $entry->entry;
-        $bill['time_calculation'] = $calculationTime;
+        $bill['time_calculation'] = date('Y-m-d H:i:s', $calculationTime);
         $bill['sub_total'] = $total;
         $bill['discount'] = [
 

@@ -24,7 +24,7 @@ class CreateVehicles extends Migration
         });
 
         DB::unprepared(/** @lang text */"
-            CREATE TRIGGER udt_uuid BEFORE INSERT on vehicles
+            CREATE TRIGGER udt_vehicle_uuid BEFORE INSERT on vehicles
             FOR EACH ROW
             BEGIN
             	SET NEW.uuid := uuid();
